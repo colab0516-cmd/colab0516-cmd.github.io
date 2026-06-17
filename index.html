@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Python自動工廠：太空射擊彈幕遊戲3</title>
+    <title>Python自動工廠：太空射擊彈幕遊戲</title>
     <style>
         body {
             margin: 0; background-color: #1a1a1a;
@@ -109,7 +109,7 @@
                         enemy.alive = false;
                         score += enemy.score;
                         bullets.splice(i, 1);
-                        break; 
+                        break;
                     }
                 }
             }
@@ -138,7 +138,7 @@
             ctx.fillStyle = "#fff"; ctx.font = "16px monospace";
             ctx.fillText("🎮 移動：A / D 或 ◄ ► 鍵", 20, 35);
             ctx.fillText("🚀 射擊：[ 空白鍵 Space ]", 20, 60);
-            
+
             ctx.fillStyle = "#00ffcc"; ctx.font = "bold 22px monospace";
             ctx.fillText("🎯 SCORE: " + score, canvas.width - 180, 45);
         }
