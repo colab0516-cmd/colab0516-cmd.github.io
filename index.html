@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Python自動工廠生成的HTML5遊戲</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #222;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 4px solid #fff;
+            background-color: #111122;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        .info { margin-bottom: 15px; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <div class="info">🤖 這是一個由 Python 後台編譯器自動渲染生成的 HTML5 生產線遊戲</div>
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // 🧠 數據熔斷與注入：由 Python 變數動態渲染而來的 JavaScript 物件
+        const player = {
+            x: 375,
+            y: 400,
+            width: 60,
+            height: 20,
+            speed: 8,
+            color: "#ff0077"
+        };
+
+        // 📥 Python 迴圈展開：自動生成敵人陣列
+        const enemies = [
+            
+            { 
+                x: 100, 
+                y: 50, 
+                width: 50, 
+                height: 30, 
+                color: "#00ffcc",
+                score: 10,
+                alive: true 
+            },
+            
+            { 
+                x: 250, 
+                y: 50, 
+                width: 50, 
+                height: 30, 
+                color: "#00ffcc",
+                score: 10,
+                alive: true 
+            },
+            
+            { 
+                x: 400, 
+                y: 50, 
+                width: 50, 
+                height: 30, 
+                color: "#00ffcc",
+                score: 10,
+                alive: true 
+            },
+            
+            { 
+                x: 550, 
+                y: 50, 
+                width: 50, 
+                height: 30, 
+                color: "#00ffcc",
+                score: 10,
+                alive: true 
+            },
+            
+            { 
+                x: 200, 
+                y: 120, 
+                width: 50, 
+                height: 30, 
+                color: "#ffff00",
+                score: 20,
+                alive: true 
+            },
+            
+            { 
+                x: 350, 
+                y: 120, 
+                width: 50, 
+                height: 30, 
+                color: "#ffff00",
+                score: 20,
+                alive: true 
+            },
+            
+            { 
+                x: 500, 
+                y: 120, 
+                width: 50, 
+                height: 30, 
+                color: "#ffff00",
+                score: 20,
+                alive: true 
+            },
+            
+        ];
+
+        // 鍵盤狀態追蹤
+        const keys = { Left: false, Right: false };
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowLeft" || e.key === "a") keys.Left = true;
+            if (e.key === "ArrowRight" || e.key === "d") keys.Right = true;
+        });
+
+        window.addEventListener("keyup", (e) => {
+            if (e.key === "ArrowLeft" || e.key === "a") keys.Left = false;
+            if (e.key === "ArrowRight" || e.key === "d") keys.Right = false;
+        });
+
+        // ⚙️ 運行期邏輯更新 (Update)
+        function update() {
+            if (keys.Left) player.x -= player.speed;
+            if (keys.Right) player.x += player.speed;
+
+            // 邊界物理熔斷
+            if (player.x < 0) player.x = 0;
+            if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+        }
+
+        // ⚙️ 運行期畫面渲染 (Draw)
+        function draw() {
+            // 清空畫布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 畫出玩家 (Python 規格定義)
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // 畫出活著的敵人
+            enemies.forEach(enemy => {
+                if (enemy.alive) {
+                    ctx.fillStyle = enemy.color;
+                    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                }
+            });
+
+            // 提示字型
+            ctx.fillStyle = "#fff";
+            ctx.font = "16px sans-serif";
+            ctx.fillText("🎮 控制鍵：使用 ◄ 與 ► 鍵移動底條", 20, 30);
+            ctx.fillText("🎯 當前關卡敵人總數: " + enemies.length, 20, 50);
+        }
+
+        // 🔄 2D 中樞神經流水線迴圈 (Game Loop)
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 🚀 通電，啟動遊戲！
+        gameLoop();
+    </script>
+</body>
+</html>
