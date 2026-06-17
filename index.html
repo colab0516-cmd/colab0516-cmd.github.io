@@ -2,154 +2,131 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Python自動工廠生成的HTML5遊戲</title>
+    <title>Python自動工廠：太空射擊彈幕遊戲</title>
     <style>
         body {
-            margin: 0;
-            background-color: #222;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #fff;
-            font-family: Arial, sans-serif;
+            margin: 0; background-color: #1a1a1a;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            height: 100vh; color: #fff; font-family: system-ui, sans-serif;
         }
-        canvas {
-            border: 4px solid #fff;
-            background-color: #111122;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-        }
-        .info { margin-bottom: 15px; font-size: 18px; }
+        canvas { border: 3px solid #00ffcc; background-color: #0b0b16; box-shadow: 0 0 30px rgba(0,255,204,0.2); }
+        .info { margin-bottom: 12px; font-size: 16px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <div class="info">🤖 這是一個由 Python 後台編譯器自動渲染生成的 HTML5 生產線遊戲</div>
+    <div class="info">🚀 Python 工廠全功能解鎖：真．動態 HTML5 射擊對戰網頁</div>
     <canvas id="gameCanvas" width="800" height="500"></canvas>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        // 🧠 數據熔斷與注入：由 Python 變數動態渲染而來的 JavaScript 物件
+        let score = 0;
+
         const player = {
-            x: 375,
-            y: 400,
-            width: 60,
-            height: 20,
-            speed: 8,
-            color: "#ff0077"
+            x: 375, y: 440,
+            width: 50, height: 20,
+            speed: 7, color: "#00ffcc"
         };
 
-        // 📥 Python 迴圈展開：自動生成敵人陣列
+        const bulletConfig = {
+            width: 4, height: 15,
+            speed: 9, color: "#ff333a"
+        };
+
+        const bullets = [];
         const enemies = [
             
-            { 
-                x: 100, 
-                y: 50, 
-                width: 50, 
-                height: 30, 
-                color: "#00ffcc",
-                score: 10,
-                alive: true 
-            },
+            { x: 100, y: 60, width: 60, height: 30, color: "#ff0055", score: 30, alive: true },
             
-            { 
-                x: 250, 
-                y: 50, 
-                width: 50, 
-                height: 30, 
-                color: "#00ffcc",
-                score: 10,
-                alive: true 
-            },
+            { x: 250, y: 60, width: 60, height: 30, color: "#ff0055", score: 30, alive: true },
             
-            { 
-                x: 400, 
-                y: 50, 
-                width: 50, 
-                height: 30, 
-                color: "#00ffcc",
-                score: 10,
-                alive: true 
-            },
+            { x: 400, y: 60, width: 60, height: 30, color: "#ff0055", score: 30, alive: true },
             
-            { 
-                x: 550, 
-                y: 50, 
-                width: 50, 
-                height: 30, 
-                color: "#00ffcc",
-                score: 10,
-                alive: true 
-            },
+            { x: 550, y: 60, width: 60, height: 30, color: "#ff0055", score: 30, alive: true },
             
-            { 
-                x: 200, 
-                y: 120, 
-                width: 50, 
-                height: 30, 
-                color: "#ffff00",
-                score: 20,
-                alive: true 
-            },
+            { x: 180, y: 120, width: 60, height: 30, color: "#ff9900", score: 10, alive: true },
             
-            { 
-                x: 350, 
-                y: 120, 
-                width: 50, 
-                height: 30, 
-                color: "#ffff00",
-                score: 20,
-                alive: true 
-            },
+            { x: 330, y: 120, width: 60, height: 30, color: "#ff9900", score: 10, alive: true },
             
-            { 
-                x: 500, 
-                y: 120, 
-                width: 50, 
-                height: 30, 
-                color: "#ffff00",
-                score: 20,
-                alive: true 
-            },
+            { x: 480, y: 120, width: 60, height: 30, color: "#ff9900", score: 10, alive: true },
             
         ];
 
-        // 鍵盤狀態追蹤
-        const keys = { Left: false, Right: false };
-
+        const keys = { Left: false, Right: false, Space: false };
         window.addEventListener("keydown", (e) => {
             if (e.key === "ArrowLeft" || e.key === "a") keys.Left = true;
             if (e.key === "ArrowRight" || e.key === "d") keys.Right = true;
+            if (e.key === " " || e.key === "Spacebar") {
+                e.preventDefault();
+                if(!keys.Space) { fireBullet(); keys.Space = true; }
+            }
         });
-
         window.addEventListener("keyup", (e) => {
             if (e.key === "ArrowLeft" || e.key === "a") keys.Left = false;
             if (e.key === "ArrowRight" || e.key === "d") keys.Right = false;
+            if (e.key === " ") keys.Space = false;
         });
 
-        // ⚙️ 運行期邏輯更新 (Update)
+        function fireBullet() {
+            bullets.push({
+                x: player.x + player.width / 2 - bulletConfig.width / 2,
+                y: player.y,
+                width: bulletConfig.width,
+                height: bulletConfig.height,
+                speed: bulletConfig.speed
+            });
+        }
+
+        function isColliding(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
         function update() {
             if (keys.Left) player.x -= player.speed;
             if (keys.Right) player.x += player.speed;
 
-            // 邊界物理熔斷
             if (player.x < 0) player.x = 0;
             if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+
+            // 子彈移動與邊界回收
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                bullets[i].y -= bullets[i].speed;
+                if (bullets[i].y + bullets[i].height < 0) {
+                    bullets.splice(i, 1);
+                    continue;
+                }
+
+                // 碰撞偵測機制
+                for (let j = 0; j < enemies.length; j++) {
+                    let enemy = enemies[j];
+                    if (enemy.alive && isColliding(bullets[i], enemy)) {
+                        enemy.alive = false;
+                        score += enemy.score;
+                        bullets.splice(i, 1);
+                        break; 
+                    }
+                }
+            }
         }
 
-        // ⚙️ 運行期畫面渲染 (Draw)
         function draw() {
-            // 清空畫布
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 畫出玩家 (Python 規格定義)
+            // 1. 畫玩家
             ctx.fillStyle = player.color;
             ctx.fillRect(player.x, player.y, player.width, player.height);
 
-            // 畫出活著的敵人
+            // 2. 畫子彈
+            ctx.fillStyle = bulletConfig.color;
+            bullets.forEach(b => ctx.fillRect(b.x, b.y, b.width, b.height));
+
+            // 3. 畫敵人
             enemies.forEach(enemy => {
                 if (enemy.alive) {
                     ctx.fillStyle = enemy.color;
@@ -157,21 +134,19 @@
                 }
             });
 
-            // 提示字型
-            ctx.fillStyle = "#fff";
-            ctx.font = "16px sans-serif";
-            ctx.fillText("🎮 控制鍵：使用 ◄ 與 ► 鍵移動底條", 20, 30);
-            ctx.fillText("🎯 當前關卡敵人總數: " + enemies.length, 20, 50);
+            // 4. 畫儀表板
+            ctx.fillStyle = "#fff"; ctx.font = "16px monospace";
+            ctx.fillText("🎮 移動：A / D 或 ◄ ► 鍵", 20, 35);
+            ctx.fillText("🚀 射擊：[ 空白鍵 Space ]", 20, 60);
+            
+            ctx.fillStyle = "#00ffcc"; ctx.font = "bold 22px monospace";
+            ctx.fillText("🎯 SCORE: " + score, canvas.width - 180, 45);
         }
 
-        // 🔄 2D 中樞神經流水線迴圈 (Game Loop)
         function gameLoop() {
-            update();
-            draw();
+            update(); draw();
             requestAnimationFrame(gameLoop);
         }
-
-        // 🚀 通電，啟動遊戲！
         gameLoop();
     </script>
 </body>
